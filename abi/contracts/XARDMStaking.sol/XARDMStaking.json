@@ -29,6 +29,7 @@
   "function penaltyFeePaused() view returns (bool)",
   "function renounceRole(bytes32,address)",
   "function revokeRole(bytes32,address)",
+  "function setDepositPause(bool)",
   "function setPenaltyDeadline(uint256)",
   "function setPenaltyFee(uint256)",
   "function setPenaltyPause(bool)",

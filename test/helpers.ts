@@ -39,7 +39,7 @@ export async function initialize() {
   const penaltyDeadline = deadline;
 
   const XArdmToken = await ethers.getContractFactory("XARDM");
-  const xArdm: XARDM = await XArdmToken.deploy();
+  const xArdm = await XArdmToken.deploy();
   await xArdm.deployed();
 
   const MockToken = await ethers.getContractFactory("MockToken");
@@ -68,8 +68,6 @@ export async function initialize() {
   const stakingB = staking.connect(accountB);
   const stakingC = staking.connect(accountC);
 
-  // await ardm.mint(this.attacker.address,parse18(500))
-  // await ardm.mint(this.victim.address,parse18(500))
   await ardm.mint(treasury.address, parse18(100));
   await ardm.connect(treasury).transfer(staking.address, parse18(1));
 
@@ -78,10 +76,16 @@ export async function initialize() {
 
   await staking.setPenaltyPause(true);
 
+  const AdminRole = await staking.DEFAULT_ADMIN_ROLE();
+  const PauserRole = await staking.PAUSER_ROLE();
+
   return {
     staking,
     xArdm,
     ardm,
+
+    AdminRole,
+    PauserRole,
 
     stakingAddress: staking.address,
     xArdmAddress: xArdm.address,

@@ -204,6 +204,12 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
         emit WithdrawPaused(state);
     }
 
+    function setDepositPause(bool state) external onlyRole(PAUSER_ROLE) {
+        require(state != depositPaused, "STATE SAME");
+        depositPaused = state;
+        emit DepositPaused(state);
+    }
+
     function setPenaltyPause(bool state) external onlyRole(PAUSER_ROLE) {
         require(state != penaltyFeePaused, "STATE SAME");
         penaltyFeePaused = state;
