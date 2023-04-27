@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+// import "hardhat/console.sol";
+
 import "./interface/IXARDM.sol";
 
 contract XARDMStaking is AccessControl,ReentrancyGuard {
@@ -88,7 +90,7 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
     function deposit(uint256 _amount) external nonReentrant whenDepositNotPaused {
         require(_amount > 0, "AMOUNT ZERO");
         uint256 totalARDM = ARDM.balanceOf(address(this));
-        require(totalARDM >= 1, "CONTRACT CAN BE FRONT RUNNED");
+        require(totalARDM >= 1 || msg.sender == treasuryAddress, "CONTRACT CAN BE FRONT RUNNED");
         uint256 totalxARDM = xARDM.totalSupply();
 
         if (totalxARDM == 0 || totalARDM == 0) {
@@ -117,7 +119,7 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
             penaltyFeePaused == false &&
             _userDeadline[msg.sender] + penaltyDeadline > block.timestamp
         ) {
-            uint256 fee = (transferAmount * penaltyFee) / 1e20;
+            uint256 fee = (transferAmount * penaltyFee) / 100e18;
             uint256 transferAmountMinusFee = transferAmount - fee;
 
             xARDM.burnFrom(msg.sender, _amount);
@@ -153,7 +155,7 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
             return 0;
         }
 
-        return (1e20 * totalARDM) / totalxARDM;
+        return (1e18 * totalARDM) / totalxARDM;
     }
 
     function getXARDMAmountRate(uint256 _amount)

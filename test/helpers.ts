@@ -1,6 +1,8 @@
 import { ethers } from "hardhat";
 import moment from "moment";
 import { BigNumber } from "@ethersproject/bignumber" 
+import { InitializerType } from "types/helper";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers" 
 // import helpers from "@nomicfoundation/hardhat-network-helpers";
 
 export function parse(amount: number | BigNumber, decimal: number) {
@@ -19,7 +21,7 @@ export function format18(amount: number | BigNumber) {
   return ethers.utils.formatUnits(amount.toString(), 18);
 }
 
-export async function initialize() {
+export async function initialize() : Promise<InitializerType> {
   let accounts = await ethers.getSigners();
   const owner = accounts[0];
   const treasury = accounts[1];
@@ -68,11 +70,12 @@ export async function initialize() {
   const stakingB = staking.connect(accountB);
   const stakingC = staking.connect(accountC);
 
-  await ardm.mint(treasury.address, parse18(100));
-  await ardm.connect(treasury).transfer(staking.address, parse18(1));
-
   let mintRole = await xArdm.MINTER_ROLE();
   await xArdm.grantRole(mintRole, staking.address);
+
+  await ardm.mint(treasury.address, parse18(51));
+  await ardm.connect(treasury).approve(staking.address, parse18(1));
+  await staking.connect(treasury).deposit(parse18(1));
 
   await staking.setPenaltyPause(true);
 
@@ -99,6 +102,10 @@ export async function initialize() {
     accountAddressB,
     accountAddressC,
 
+    accountA,
+    accountB,
+    accountC,
+
     ardmA,
     ardmB,
     ardmC,
@@ -111,4 +118,18 @@ export async function initialize() {
     stakingB,
     stakingC,
   };
+}
+
+export async function stakingDeposit(base : InitializerType,account : SignerWithAddress,amount:number){
+  const { ardm,staking,stakingAddress } = base;
+
+  await ardm.connect(account).approve(stakingAddress, parse18(amount));
+  await staking.connect(account).deposit(parse18(amount));
+}
+
+export async function stakingWithdraw(base : InitializerType,account : SignerWithAddress,amount:number){
+  const { xArdm,staking,stakingAddress } = base;
+
+  await xArdm.connect(account).approve(stakingAddress, parse18(amount));
+  await staking.connect(account).withdraw(parse18(amount));
 }
