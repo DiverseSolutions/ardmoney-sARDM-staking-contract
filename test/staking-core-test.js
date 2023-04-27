@@ -5,7 +5,7 @@ const helpers = require("@nomicfoundation/hardhat-network-helpers");
 const moment = require('moment');
 const { sendReward } = require("./coreHelper");
 
-describe("xARDMStaking", function () {
+describe("xardmstaking", function () {
 
   beforeEach(async function () {
     let accounts = await ethers.getSigners()

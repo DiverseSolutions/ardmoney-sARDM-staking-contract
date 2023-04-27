@@ -3,29 +3,21 @@ pragma solidity 0.8.19;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
-contract XARDM is ERC20, ERC20Burnable, Pausable, AccessControl, ERC20Permit, ERC20Votes {
-    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+contract XARDM is ERC20, ERC20Burnable, AccessControl, ERC20Permit, ERC20Votes {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    constructor(address _adminAddress,address _stakingAddress) ERC20("xArdMoney", "xARDM") ERC20Permit("xArdMoney") {
-        _grantRole(DEFAULT_ADMIN_ROLE, _adminAddress);
-        _grantRole(PAUSER_ROLE, _adminAddress);
-        _grantRole(MINTER_ROLE, _adminAddress);
-
-        _grantRole(MINTER_ROLE, _stakingAddress);
-    }
-
-    function pause() public onlyRole(PAUSER_ROLE) {
-        _pause();
-    }
-
-    function unpause() public onlyRole(PAUSER_ROLE) {
-        _unpause();
+    /**
+     * After Token Deployment , Grant Minting Privilege to Staking Contract
+     *
+     * After Granting Staking Contract Minter Role , Owner of the contract should be migrated
+     * to an GnosisSafe MultiSignature Wallet with 3 Wallet Consensus Protocol
+     */
+    constructor() ERC20("xArdMoney", "xARDM") ERC20Permit("xArdMoney") {
+        _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
     function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
@@ -34,7 +26,6 @@ contract XARDM is ERC20, ERC20Burnable, Pausable, AccessControl, ERC20Permit, ER
 
     function _beforeTokenTransfer(address from, address to, uint256 amount)
         internal
-        whenNotPaused
         override
     {
         super._beforeTokenTransfer(from, to, amount);

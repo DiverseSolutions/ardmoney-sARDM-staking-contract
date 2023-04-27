@@ -1,17 +1,21 @@
-require('dotenv').config()
-require('hardhat-abi-exporter');
-require("@nomicfoundation/hardhat-toolbox");
+import dotenv from "dotenv"
+import "hardhat-abi-exporter"
+import '@typechain/hardhat'
+import '@nomiclabs/hardhat-ethers'
+import "@nomicfoundation/hardhat-toolbox"
+import { HardhatUserConfig } from "hardhat/types"
 
-/** @type import('hardhat/config').HardhatUserConfig */
-module.exports = {
+dotenv.config()
+
+const config : HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: "0.8.19",
-        optimizer: {
-          enabled: true,
-          runs: 999999,
-        },
+        version: "0.8.19"
+        // settings: {
+        //   enabled: true,
+        //   runs: 999999,
+        // },
       },
     ],
   },
@@ -48,7 +52,9 @@ module.exports = {
       mainnet: "YOUR_ETHERSCAN_API_KEY",
       optimisticEthereum: "YOUR_OPTIMISTIC_ETHERSCAN_API_KEY",
       arbitrumOne: "YOUR_ARBISCAN_API_KEY",
-      bsc: process.env.BSC_API_KEY,
+      bsc: process.env.BSC_API_KEY ?? "",
     },
   }
-};
+}
+
+export default config;

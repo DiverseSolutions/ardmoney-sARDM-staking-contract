@@ -1,8 +1,20 @@
 {
   "name": "ardmoney-stacking",
+  "scripts": {
+    "test": "npx hardhat test --typecheck"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",
-    "hardhat": "^2.11.0"
+    "@typechain/ethers-v5": "^10.2.0",
+    "@typechain/hardhat": "^6.1.5",
+    "@types/chai": "^4.3.4",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^18.16.1",
+    "chai": "^4.3.7",
+    "hardhat": "^2.11.0",
+    "ts-node": "^10.9.1",
+    "typechain": "^8.1.1",
+    "typescript": "^5.0.4"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.3",

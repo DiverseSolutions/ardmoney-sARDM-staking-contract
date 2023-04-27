@@ -1,24 +1,24 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "./XARDM.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract XARDMStaking is Ownable,ReentrancyGuard {
-    using SafeMath for uint256;
+import "./interface/IXARDM.sol";
+
+contract XARDMStaking is AccessControl,ReentrancyGuard {
+    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+    using SafeERC20 for IERC20;
 
     mapping(address => uint256) private _userDeadline;
     uint256 public penaltyFee;
     uint256 public penaltyDeadline;
-    address public penaltyToAddress;
     address public treasuryAddress;
 
-    IERC20 public ARDM;
-    XARDM public xARDM;
+    IERC20 immutable ARDM;
+    IXARDM immutable xARDM;
 
     bool public withdrawPaused;
     bool public depositPaused;
@@ -28,8 +28,8 @@ contract XARDMStaking is Ownable,ReentrancyGuard {
     event WithdrawPaused(bool state);
     event PenaltyPaused(bool state);
 
-    event Deposit(address user, uint256 amount, uint256 xAmount);
-    event Withdraw(address user, uint256 amount, uint256 xAmount);
+    event Deposit(address indexed user, uint256 amount, uint256 xAmount);
+    event Withdraw(address indexed user, uint256 amount, uint256 xAmount);
 
     event PenaltyFeeSent(address treasuryAddress, uint256 amount);
 
@@ -50,32 +50,45 @@ contract XARDMStaking is Ownable,ReentrancyGuard {
         _;
     }
 
-    modifier onlyEOA() {
-      require((msg.sender).code.length == 0, "ONLY EOA");
-      require(msg.sender == tx.origin, "ONLY EOA");
-      _;
-    }
-
+    /**
+     * 
+     * After Contract Deployed , Owner of the contract should be migrated
+     * to an GnosisSafe MultiSignature Wallet with 3 Wallet Consensus Protocol
+     * 
+     * Contract Deployer will be emergency pauser if anything goes wrong
+     * 
+     * 
+     */
     constructor(
         IERC20 _ARDM,
+        IXARDM _xARDM,
         uint256 _penaltyFee,
         uint256 _penaltyDeadline,
         address _treasuryAddress
     ) {
+        require(address(_ARDM) != address(0), "ARDM ADDRESS ZERO");
+        require(address(_treasuryAddress) != address(0), "TREASURY ADDRESS ZERO");
+
+        _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
+        _grantRole(PAUSER_ROLE, _msgSender());
+
         ARDM = _ARDM;
-        xARDM = new XARDM(msg.sender, address(this));
+        xARDM = _xARDM;
 
         penaltyFee = _penaltyFee;
         penaltyDeadline = _penaltyDeadline;
         treasuryAddress = _treasuryAddress;
-
-        withdrawPaused = false;
-        depositPaused = false;
     }
 
-    function deposit(uint256 _amount) external nonReentrant onlyEOA whenDepositNotPaused {
+    /**
+     * 
+     * Must atleast have 1 ARDM in Staking to migrate Front-Running Attack
+     * 
+     */
+    function deposit(uint256 _amount) external nonReentrant whenDepositNotPaused {
         require(_amount > 0, "AMOUNT ZERO");
         uint256 totalARDM = ARDM.balanceOf(address(this));
+        require(totalARDM >= 1, "CONTRACT CAN BE FRONT RUNNED");
         uint256 totalxARDM = xARDM.totalSupply();
 
         if (totalxARDM == 0 || totalARDM == 0) {
@@ -86,14 +99,14 @@ contract XARDMStaking is Ownable,ReentrancyGuard {
             xARDM.mint(msg.sender, mintAmount);
             emit Deposit(msg.sender, _amount, mintAmount);
         }
-        ARDM.transferFrom(msg.sender, address(this), _amount);
+        ARDM.safeTransferFrom(msg.sender, address(this), _amount);
 
         if (penaltyFeePaused == false) {
             _userDeadline[msg.sender] = block.timestamp;
         }
     }
 
-    function withdraw(uint256 _amount) external nonReentrant onlyEOA whenWithdrawNotPaused {
+    function withdraw(uint256 _amount) external nonReentrant whenWithdrawNotPaused {
         require(_amount > 0, "AMOUNT ZERO");
         uint256 totalARDM = ARDM.balanceOf(address(this));
         uint256 totalxARDM = xARDM.totalSupply();
@@ -104,35 +117,20 @@ contract XARDMStaking is Ownable,ReentrancyGuard {
             penaltyFeePaused == false &&
             _userDeadline[msg.sender] + penaltyDeadline > block.timestamp
         ) {
-            uint256 fee = (transferAmount * penaltyFee) / 100000000000000000000;
+            uint256 fee = (transferAmount * penaltyFee) / 1e20;
             uint256 transferAmountMinusFee = transferAmount - fee;
 
             xARDM.burnFrom(msg.sender, _amount);
-            ARDM.transfer(msg.sender, transferAmountMinusFee);
-            ARDM.transfer(treasuryAddress, fee);
+            ARDM.safeTransfer(msg.sender, transferAmountMinusFee);
+            ARDM.safeTransfer(treasuryAddress, fee);
             emit PenaltyFeeSent(treasuryAddress, fee);
         } else {
             xARDM.burnFrom(msg.sender, _amount);
-            ARDM.transfer(msg.sender, transferAmount);
+            ARDM.safeTransfer(msg.sender, transferAmount);
         }
 
         emit Withdraw(msg.sender, transferAmount, _amount);
     }
-
-    function resetRewards(address to) external onlyOwner {
-        require(depositPaused, "DEPOSIT NOT PAUSED");
-        require(withdrawPaused, "WITHDRAW NOT PAUSED");
-
-        uint256 totalARDM = ARDM.balanceOf(address(this));
-        uint256 totalxARDM = xARDM.totalSupply();
-
-        require(totalARDM > totalxARDM, "NO REWARD DETECTED ON STAKING");
-
-        uint256 amount = totalARDM - totalxARDM;
-
-        ARDM.transfer(to, amount);
-    }
-
 
     function hasUserDeadlinePassed(address account)
         external
@@ -147,10 +145,6 @@ contract XARDMStaking is Ownable,ReentrancyGuard {
         }
     }
 
-    function getXARDMAddress() external view returns (address) {
-        return address(xARDM);
-    }
-
     function getXARDMRate() external view returns (uint256) {
         uint256 totalARDM = ARDM.balanceOf(address(this));
         uint256 totalxARDM = xARDM.totalSupply();
@@ -159,7 +153,7 @@ contract XARDMStaking is Ownable,ReentrancyGuard {
             return 0;
         }
 
-        return (1000000000000000000 * totalARDM) / totalxARDM;
+        return (1e20 * totalARDM) / totalxARDM;
     }
 
     function getXARDMAmountRate(uint256 _amount)
@@ -174,45 +168,46 @@ contract XARDMStaking is Ownable,ReentrancyGuard {
         return (_amount * totalxARDM) / totalARDM;
     }
 
+    function getTotalxARDM() external view returns (uint256) {
+        return xARDM.totalSupply();
+    }
+
     function getTotalLockedARDM() external view returns (uint256) {
         uint256 totalARDM = ARDM.balanceOf(address(this));
         return totalARDM;
     }
 
-    function setPenaltyDeadline(uint256 _deadline) external onlyOwner {
+    function setPenaltyDeadline(uint256 _deadline) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(_deadline != penaltyDeadline, "PENALTY DEADLINE SAME");
         uint256 oldDeadline = penaltyDeadline;
         penaltyDeadline = _deadline;
         emit PenaltyDeadlineUpdated(oldDeadline, _deadline);
     }
 
-    function setPenaltyFee(uint256 _fee) external onlyOwner {
+    function setPenaltyFee(uint256 _fee) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(_fee != penaltyFee, "PENALTY FEE SAME");
         uint256 oldFee = penaltyFee;
         penaltyFee = _fee;
         emit PenaltyFeeUpdated(oldFee, _fee);
     }
 
-    function setTreasuryAddress(address _treasuryAddress) external onlyOwner {
+    function setTreasuryAddress(address _treasuryAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(_treasuryAddress != treasuryAddress, "TREASURY ADDRESS SAME");
         address oldTreasuryAddress = treasuryAddress;
         treasuryAddress = _treasuryAddress;
         emit TreasuryAddressUpdated(oldTreasuryAddress, _treasuryAddress);
     }
 
-    function toggleWithdrawPause() external onlyOwner {
-        withdrawPaused = !withdrawPaused;
-        emit WithdrawPaused(withdrawPaused);
+    function setWithdrawPause(bool state) external onlyRole(PAUSER_ROLE) {
+        require(state != withdrawPaused, "STATE SAME");
+        withdrawPaused = state;
+        emit WithdrawPaused(state);
     }
 
-    function toggleDepositPause() external onlyOwner {
-        depositPaused = !depositPaused;
-        emit DepositPaused(depositPaused);
-    }
-
-    function togglePenaltyPause() external onlyOwner {
-        penaltyFeePaused = !penaltyFeePaused;
-        emit PenaltyPaused(penaltyFeePaused);
+    function setPenaltyPause(bool state) external onlyRole(PAUSER_ROLE) {
+        require(state != penaltyFeePaused, "STATE SAME");
+        penaltyFeePaused = state;
+        emit PenaltyPaused(state);
     }
 
     function userDeadlineOf(address account) external view returns (uint256) {
@@ -221,6 +216,6 @@ contract XARDMStaking is Ownable,ReentrancyGuard {
     }
 
     function version() external pure returns (string memory) {
-        return "1";
+        return "2";
     }
 }
