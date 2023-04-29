@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { format18, initialize, parse18, stakingDeposit, stakingWithdraw } from "./helpers"
+import { initialize, parse18, stakingDeposit, stakingWithdraw } from "./helpers"
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import moment from "moment";
 import { mine } from "@nomicfoundation/hardhat-network-helpers";
@@ -71,7 +71,6 @@ describe("Testing Penalty", function () {
   })
 
 })
-
 
 // console.log("Treasury - ",format18(await ardm.balanceOf(treasury.address)))
 // console.log("AccountA - ",format18(await ardm.balanceOf(accountA.address)))
