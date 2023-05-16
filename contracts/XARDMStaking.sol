@@ -248,21 +248,21 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
         emit TreasuryAddressUpdated(oldTreasuryAddress, _treasuryAddress);
     }
 
-    /// @dev Can be only set by ADMIN
+    /// @dev Can be only set by PAUSER
     function setWithdrawPause(bool state) external onlyRole(PAUSER_ROLE) {
         require(state != withdrawPaused, "STATE SAME");
         withdrawPaused = state;
         emit WithdrawPaused(state);
     }
 
-    /// @dev Can be only set by ADMIN
+    /// @dev Can be only set by PAUSER
     function setDepositPause(bool state) external onlyRole(PAUSER_ROLE) {
         require(state != depositPaused, "STATE SAME");
         depositPaused = state;
         emit DepositPaused(state);
     }
 
-    /// @dev Can be only set by ADMIN
+    /// @dev Can be only set by PAUSER
     function setPenaltyPause(bool state) external onlyRole(PAUSER_ROLE) {
         require(state != penaltyFeePaused, "STATE SAME");
         penaltyFeePaused = state;
