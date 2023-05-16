@@ -9,19 +9,36 @@ their withdraw will not have penalty. Vice versa when users withdraw their ARDM 
 withdraw amount will have a penalty fee. The penalty fee will be sent to the treasury address. The contract also has pausibility features allowing for quick withdraw
 and deposit functionality freeze. In case of any error happens.
 
-## Roles
+## Functionality Requirement
+
+### Roles
  - Pauser : Can pause Penalty,Withdraw,Deposit features
  - Admin : Can change penalty fee, penalty deadline, treasury address, revoke Roles
  - Treasury : Must add reward ARDM to staking contract & also receives penalty fees
  - User : Can deposit ARDM and receive xARDM also withdraw their ARDM by giving back their xARDM by the current rate
 
-## Features
+### Features
  - Withdraw Pausibility
  - Deposit Pausibility
  - Penalty Pausibility
  - Recieves Reward from 1 address
  - Reward functionality that adds value to xARDM weekly
  - Locks ARDM and gives back xARDM
+
+### Use Case
+ 1. User deposits ARDM and recieves xARDM by using the deposit functionality of contract.
+ 2. Treasury Address adds ARDM to contract by using the reward functionality of contract. This will increase the xARDM rate
+ 3. User withdraws their ARDM + Reward by using the withdraw functionality of contract. xARDM rate is up henceforth user receives more ARDM than initial deposit
+
+## Technical Requirement
+ - Smart Contracts are written with Solidity language.
+ - Smart Contracts mostly uses OpenZeppelin Contracts.
+ - Smart Contracts follow the Natspec Format.
+ - Solidity compiler version 0.8.19 is used.
+ - Using the Hardhat development framework.
+ - Typescript is used for testing & deployment scripts.
+ - Using the hardhat-abi-exporter plugin for ABI export when smart contracts compiled.
+ - Smart contracts are designed to be deployed to BSC chain.
 
 ---
 
