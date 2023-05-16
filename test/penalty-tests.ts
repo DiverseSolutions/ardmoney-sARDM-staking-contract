@@ -26,8 +26,8 @@ describe("Testing Penalty", function () {
     await stakingWithdraw(base,accountA,50)
 
     expect(await staking.hasUserDeadlinePassed(accountA.address)).to.equal(false);
-    expect(await staking.getTotalLockedARDM()).to.equal(parse18(1));
-    expect(await staking.getTotalxARDM()).to.equal(parse18(1));
+    expect(await staking.getTotalLockedARDM()).to.equal(parse18(0));
+    expect(await staking.getTotalxARDM()).to.equal(parse18(0));
 
     expect(await ardm.balanceOf(treasury.address)).to.equal(parse18(100));
     expect(await ardm.balanceOf(accountA.address)).to.equal(parse18(50));
@@ -42,8 +42,8 @@ describe("Testing Penalty", function () {
     await stakingWithdraw(base,accountA,50)
 
     expect(await staking.hasUserDeadlinePassed(accountA.address)).to.equal(true);
-    expect(await staking.getTotalLockedARDM()).to.equal(parse18(1));
-    expect(await staking.getTotalxARDM()).to.equal(parse18(1));
+    expect(await staking.getTotalLockedARDM()).to.equal(parse18(0));
+    expect(await staking.getTotalxARDM()).to.equal(parse18(0));
 
     expect(await ardm.balanceOf(treasury.address)).to.equal(parse18(50));
     expect(await ardm.balanceOf(accountA.address)).to.equal(parse18(100));
@@ -63,8 +63,8 @@ describe("Testing Penalty", function () {
 
     await stakingWithdraw(base,accountA,50)
 
-    expect(await staking.getTotalLockedARDM()).to.equal(parse18(1));
-    expect(await staking.getTotalxARDM()).to.equal(parse18(1));
+    expect(await staking.getTotalLockedARDM()).to.equal(parse18(0));
+    expect(await staking.getTotalxARDM()).to.equal(parse18(0));
 
     expect(await ardm.balanceOf(treasury.address)).to.equal(parse18(50));
     expect(await ardm.balanceOf(accountA.address)).to.equal(parse18(100));

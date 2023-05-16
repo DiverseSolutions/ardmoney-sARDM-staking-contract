@@ -16,8 +16,8 @@ describe("Testing Rewards", function() {
     await ardm.mint(accountA.address, parse18(100));
     // Treasury now 500
     await ardm.mint(treasury.address,parse18(450))
-    await ardm.connect(treasury).approve(staking.address,parse18(49))
-    await staking.connect(treasury).deposit(parse18(49))
+    await ardm.connect(treasury).approve(staking.address,parse18(50))
+    await staking.connect(treasury).deposit(parse18(50))
 
     return base;
   }
@@ -31,7 +31,7 @@ describe("Testing Rewards", function() {
     await stakingDeposit(base, accountA, 50);
     // await stakingWithdraw(base, accountA, 50);
     await ardm.connect(treasury).approve(staking.address,parse18(100))
-    await ardm.connect(treasury).transfer(staking.address,parse18(100))
+    await staking.connect(treasury).reward(parse18(100))
     
     // Rate = (1e18 * totalARDM) / totalxARDM;
     // xARDM * Rate = ARDM

@@ -73,9 +73,7 @@ export async function initialize() : Promise<InitializerType> {
   let mintRole = await xArdm.MINTER_ROLE();
   await xArdm.grantRole(mintRole, staking.address);
 
-  await ardm.mint(treasury.address, parse18(51));
-  await ardm.connect(treasury).approve(staking.address, parse18(1));
-  await staking.connect(treasury).deposit(parse18(1));
+  await ardm.mint(treasury.address, parse18(50));
 
   await staking.setPenaltyPause(true);
 

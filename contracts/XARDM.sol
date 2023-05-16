@@ -10,12 +10,8 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 contract XARDM is ERC20, ERC20Burnable, AccessControl, ERC20Permit, ERC20Votes {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    /**
-     * After Token Deployment , Grant Minting Privilege to Staking Contract
-     *
-     * After Granting Staking Contract Minter Role , Owner of the contract should be migrated
-     * to an GnosisSafe MultiSignature Wallet with 3 Wallet Consensus Protocol
-     */
+    /// @dev After Token Deployment , Grant Minting Privilege to Staking Contract
+    /// @dev After Granting Staking Contract Minter Role , Owner of the contract should be migrated to an GnosisSafe MultiSignature Wallet with 3 Wallet Consensus Protocol
     constructor() ERC20("xArdMoney", "xARDM") ERC20Permit("xArdMoney") {
         _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
