@@ -23,6 +23,18 @@ and deposit functionality freeze. In case of any error happens.
 
 ---
 
+## Deployment flow
+ 1. ArdMoney token must be deployed
+ 2. Treasury address must be defined
+ 3. Penalty fee must be defined
+ 4. Penalty deadline must be defined
+ 5. xARDM token must be deployed
+ 6. Staking then must be deployed with all the above parameters
+ 7. Mint role must be given from xARDM to Staking Contract
+ 8. Staking contract is ready to be used
+
+---
+
 ## Functionality Requirement
 
 ### Roles
