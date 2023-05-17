@@ -23,9 +23,9 @@ describe("Testing Penalty", function () {
     const { staking,accountA } = base;
 
     await stakingDeposit(base,accountA,50)
-    let currentDeadline = await staking.getUserDeadline(accountA.address)
+    let currentDeadline = await staking.userDeadlineOf(accountA.address)
     await stakingDeposit(base,accountA,50)
-    let newDeadline = await staking.getUserDeadline(accountA.address)
+    let newDeadline = await staking.userDeadlineOf(accountA.address)
 
     expect(currentDeadline).to.equal(newDeadline);
   })

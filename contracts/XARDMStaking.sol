@@ -192,17 +192,6 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
         }
     }
 
-    /// @notice Utility Function to check staker deadline 
-    /// @dev Helpful to check customer problems involving penalty deadline 
-    function getUserDeadline(address account)
-        external
-        view
-        returns (uint)
-    {
-        require(account != address(0), "ADDRESS ZERO");
-        return _userDeadline[account];
-    }
-
     /// @notice Utility Function to get current 1 xARDM rate
     function getXARDMRate() external view returns (uint256) {
         uint256 totalxARDM = xARDM.totalSupply();
