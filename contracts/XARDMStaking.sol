@@ -45,6 +45,7 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
 
     /// @notice Used to calculate xARDM Rate & view contract total locked ARDM
     /// @dev Updated in Deposit,Withdraw Function
+    /// @dev this way,front-running attack can be mitigated because only Treasury Address can add rewards to staking contract
     uint256 public totalARDM;
 
     /// @notice Used to transfer ARDM Tokens
@@ -137,8 +138,8 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
         ARDM.safeTransferFrom(msg.sender, address(this), _amount);
         totalARDM += _amount;
 
-        if (!penaltyFeePaused) {
-            _userDeadline[msg.sender] = block.timestamp;
+        if (!penaltyFeePaused && _userDeadline[msg.sender] < block.timestamp) {
+            _userDeadline[msg.sender] = block.timestamp + penaltyDeadline;
         }
     }
 
@@ -159,7 +160,7 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
 
         uint256 transferAmount = (_amount * totalARDM) / totalxARDM;
 
-        if (!penaltyFeePaused && _userDeadline[msg.sender] + penaltyDeadline > block.timestamp) {
+        if (!penaltyFeePaused && _userDeadline[msg.sender] > block.timestamp) {
             uint256 fee = (transferAmount * penaltyFee) / HUNDRED;
             uint256 transferAmountMinusFee = transferAmount - fee;
 
@@ -184,11 +185,22 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
         returns (bool)
     {
         require(account != address(0), "ADDRESS ZERO");
-        if (_userDeadline[account] + penaltyDeadline > block.timestamp) {
+        if (_userDeadline[account] > block.timestamp) {
             return false;
         } else {
             return true;
         }
+    }
+
+    /// @notice Utility Function to check staker deadline 
+    /// @dev Helpful to check customer problems involving penalty deadline 
+    function getUserDeadline(address account)
+        external
+        view
+        returns (uint)
+    {
+        require(account != address(0), "ADDRESS ZERO");
+        return _userDeadline[account];
     }
 
     /// @notice Utility Function to get current 1 xARDM rate

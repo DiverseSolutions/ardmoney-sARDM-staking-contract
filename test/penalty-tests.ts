@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { initialize, parse18, stakingDeposit, stakingWithdraw } from "./helpers"
+import { format18, initialize, parse18, stakingDeposit, stakingWithdraw } from "./helpers"
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import moment from "moment";
 import { mine } from "@nomicfoundation/hardhat-network-helpers";
@@ -17,6 +17,18 @@ describe("Testing Penalty", function () {
 
     return base
   }
+
+  it("Multi-Deposit Deadline Check", async function () {
+    const base = await loadFixture(testScenarioSetup);
+    const { staking,accountA } = base;
+
+    await stakingDeposit(base,accountA,50)
+    let currentDeadline = await staking.getUserDeadline(accountA.address)
+    await stakingDeposit(base,accountA,50)
+    let newDeadline = await staking.getUserDeadline(accountA.address)
+
+    expect(currentDeadline).to.equal(newDeadline);
+  })
 
   it("Penalty", async function () {
     const base = await loadFixture(testScenarioSetup);
