@@ -15,6 +15,7 @@ and deposit functionality freeze. In case of any error happens.
  - Smart Contracts are written with Solidity language.
  - Smart Contracts mostly uses OpenZeppelin Contracts.
  - Smart Contracts follow the Natspec Format.
+ - Smart Contracts must be written with full flexibility.
  - Solidity compiler version 0.8.19 is used.
  - Using the Hardhat development framework.
  - Typescript is used for testing & deployment scripts.
@@ -50,6 +51,7 @@ and deposit functionality freeze. In case of any error happens.
  - Recieves Reward from 1 address
  - Reward functionality that adds value to xARDM weekly
  - Locks ARDM and gives back xARDM
+ - xARDM token must have MINTER ROLE and only should point to 1 Staking Contract. IF in the future staking contract needs to be closed then minter role of that staking contract needs to be revoked and new staking contract needs to have minter role. Giving us full flexibility and migration abilities of xARDM token
 
 ### Use Case
  1. User deposits ARDM and recieves xARDM by using the deposit functionality of contract.
