@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
+/// @dev xARDM token must have MINTER ROLE and only should point to 1 Staking Contract. 
 contract XARDM is ERC20, ERC20Burnable, AccessControl, ERC20Permit, ERC20Votes {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
@@ -17,6 +18,8 @@ contract XARDM is ERC20, ERC20Burnable, AccessControl, ERC20Permit, ERC20Votes {
         _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
+    /// @dev xARDM token must have MINTER ROLE and only should point to 1 Staking Contract. 
+    /// @dev IF in the future staking contract needs to be closed then minter role of that staking contract needs to be revoked and new staking contract needs to have minter role. Giving us full flexibility and migration abilities of xARDM token.
     function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
         _mint(to, amount);
     }

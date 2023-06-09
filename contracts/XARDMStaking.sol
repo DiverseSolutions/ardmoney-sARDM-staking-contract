@@ -39,6 +39,9 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
     uint public constant HUNDRED = 100e18;
     uint public constant ONE = 1e18;
 
+    /// @notice Constant for penalty fee cap
+    uint public constant FEE_CAP = 10e18;
+
     /// @notice Treasury Address is the one who adds ARDM Reward to contract & also the address where the penalty fee goes to
     /// @dev Initially set in construction
     address public treasuryAddress;
@@ -107,6 +110,7 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
     ) {
         require(address(_ARDM) != address(0), "ARDM ADDRESS ZERO");
         require(address(_treasuryAddress) != address(0), "TREASURY ADDRESS ZERO");
+        require(_penaltyFee <= FEE_CAP, "PENALTY FEE ABOVE 10% CAP");
 
         _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _grantRole(PAUSER_ROLE, _msgSender());
@@ -120,6 +124,7 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
     }
 
     /// @notice Deposit model follows the traditional SushiSwap Staking Contract but with a penalty system
+    /// @notice User deadline gets updated everytime user deposits token. It is an intended behavior of the system
     /// @dev Added settings for deposit pause , for better security if anything goes wrong with staking contract 
     /// @dev Added settings for withdraw pause , for better security if anything goes wrong with staking contract 
     function deposit(uint256 _amount) external nonReentrant whenDepositNotPaused {
@@ -138,7 +143,7 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
         ARDM.safeTransferFrom(msg.sender, address(this), _amount);
         totalARDM += _amount;
 
-        if (!penaltyFeePaused && _userDeadline[msg.sender] < block.timestamp) {
+        if (!penaltyFeePaused) {
             _userDeadline[msg.sender] = block.timestamp + penaltyDeadline;
         }
     }
@@ -164,16 +169,19 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
             uint256 fee = (transferAmount * penaltyFee) / HUNDRED;
             uint256 transferAmountMinusFee = transferAmount - fee;
 
+            totalARDM -= transferAmount;
+
             xARDM.burnFrom(msg.sender, _amount);
             ARDM.safeTransfer(msg.sender, transferAmountMinusFee);
             ARDM.safeTransfer(treasuryAddress, fee);
             emit PenaltyFeeSent(treasuryAddress, fee);
         } else {
+            totalARDM -= transferAmount;
+
             xARDM.burnFrom(msg.sender, _amount);
             ARDM.safeTransfer(msg.sender, transferAmount);
         }
 
-        totalARDM -= transferAmount;
         emit Withdraw(msg.sender, transferAmount, _amount);
     }
 
@@ -236,6 +244,7 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
     /// @dev Can be only set by ADMIN
     function setPenaltyFee(uint256 _fee) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(_fee != penaltyFee, "PENALTY FEE SAME");
+        require(_fee <= FEE_CAP, "PENALTY FEE ABOVE 10% CAP");
         uint256 oldFee = penaltyFee;
         penaltyFee = _fee;
         emit PenaltyFeeUpdated(oldFee, _fee);

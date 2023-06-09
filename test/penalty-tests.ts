@@ -12,23 +12,11 @@ describe("Testing Penalty", function () {
     const { ardm,staking,accountA } = base;
 
     await staking.setPenaltyPause(false)
-    await staking.setPenaltyFee(parse18(100))
+    await staking.setPenaltyFee(parse18(5))
     await ardm.mint(accountA.address, parse18(100));
 
     return base
   }
-
-  it("Multi-Deposit Deadline Check", async function () {
-    const base = await loadFixture(testScenarioSetup);
-    const { staking,accountA } = base;
-
-    await stakingDeposit(base,accountA,50)
-    let currentDeadline = await staking.userDeadlineOf(accountA.address)
-    await stakingDeposit(base,accountA,50)
-    let newDeadline = await staking.userDeadlineOf(accountA.address)
-
-    expect(currentDeadline).to.equal(newDeadline);
-  })
 
   it("Penalty", async function () {
     const base = await loadFixture(testScenarioSetup);
@@ -41,8 +29,8 @@ describe("Testing Penalty", function () {
     expect(await staking.getTotalLockedARDM()).to.equal(parse18(0));
     expect(await staking.getTotalxARDM()).to.equal(parse18(0));
 
-    expect(await ardm.balanceOf(treasury.address)).to.equal(parse18(100));
-    expect(await ardm.balanceOf(accountA.address)).to.equal(parse18(50));
+    expect(await ardm.balanceOf(treasury.address)).to.equal(parse18(52.5));
+    expect(await ardm.balanceOf(accountA.address)).to.equal(parse18(97.5));
   })
 
   it("No Penalty - Penalty Paused", async function () {

@@ -14,6 +14,7 @@
   "event Withdraw(address indexed,uint256,uint256)",
   "event WithdrawPaused(bool)",
   "function DEFAULT_ADMIN_ROLE() view returns (bytes32)",
+  "function FEE_CAP() view returns (uint256)",
   "function HUNDRED() view returns (uint256)",
   "function ONE() view returns (uint256)",
   "function PAUSER_ROLE() view returns (bytes32)",
