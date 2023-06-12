@@ -60,6 +60,77 @@ and deposit functionality freeze. In case of any error happens.
 
 ---
 
+## Getting Started
+---
+Recommended Node version is 16.0.0 and above.
+
+### Available commands
+```
+
+# install dependencies
+$ npm install
+
+# run tests
+$ npm run test
+
+# compile contracts & generate ABI and Typescript types
+$ npm run compile
+
+# force compile contracts & generate ABI and Typescript types
+$ npm run force-compile
+
+# deploy contracts locally
+$ npm run deploy-local
+
+# deploy contracts to ganache
+$ npm run deploy-ganache
+
+# deploy contracts to bsc
+$ npm run deploy-bsc
+
+# deploy contracts to testnet bsc
+$ npm run deploy-test-bsc
+
+```
+
+## Project Structure
+---
+This a template hardhat typescript project composed of contracts, tests, and deploy instructions that provides a great starting point for developers to quickly get up and running and deploying smart contracts on the Ethereum blockchain.
+
+### Tests
+---
+Tests are found in the ./test/ folder.
+
+### Contracts
+---
+Solidity smart contracts are found in ./contracts/
+
+### ABI
+---
+Solidity smart contracts ABI's are generated in ./abi/ when contracts are compiled.
+
+### Deploy
+---
+Deploy script can be found in the ./scripts/deployment.ts.
+
+Rename ./.env.example to ./.env in the project root. To add the private key of a deployer account, assign the environment variables.
+
+```
+# deploy contracts locally
+$ npm run deploy-local
+
+# deploy contracts to ganache
+$ npm run deploy-ganache
+
+# deploy contracts to bsc
+$ npm run deploy-bsc
+
+# deploy contracts to testnet bsc
+$ npm run deploy-test-bsc
+```
+
+---
+
 ## Old Version Deployment History
 
 #### BSC Deployment

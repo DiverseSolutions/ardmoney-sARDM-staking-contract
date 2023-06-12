@@ -1,7 +1,14 @@
 {
   "name": "ardmoney-stacking",
   "scripts": {
-    "test": "npx hardhat test --typecheck"
+    "test": "npx hardhat test --typecheck",
+    "compile": "npx hardhat compile",
+    "force-compile": "npx hardhat compile --force",
+    "deploy-local": "npx hardhat run scripts/deployment.ts",
+    "deploy-ganache": "npx hardhat run scripts/deployment.ts --network ganache",
+    "deploy-bsc": "npx hardhat run scripts/deployment.ts --network bsc",
+    "deploy-test-bsc": "npx hardhat run scripts/deployment.ts --network bscTestnet"
+    
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",
