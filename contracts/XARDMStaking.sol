@@ -36,11 +36,11 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
 
 
     /// @notice Constants used for calculation
-    uint public constant HUNDRED = 100e18;
-    uint public constant ONE = 1e18;
+    uint256 public constant HUNDRED = 100e18;
+    uint256 public constant ONE = 1e18;
 
     /// @notice Constant for penalty fee cap
-    uint public constant FEE_CAP = 10e18;
+    uint256 public constant FEE_CAP = 10e18;
 
     /// @notice Treasury Address is the one who adds ARDM Reward to contract & also the address where the penalty fee goes to
     /// @dev Initially set in construction
