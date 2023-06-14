@@ -20,15 +20,8 @@ contract XARDM is ERC20, ERC20Burnable, AccessControl, ERC20Permit, ERC20Votes {
 
     /// @dev xARDM token must have MINTER ROLE and only should point to 1 Staking Contract. 
     /// @dev IF in the future staking contract needs to be closed then minter role of that staking contract needs to be revoked and new staking contract needs to have minter role. Giving us full flexibility and migration abilities of xARDM token.
-    function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
+    function mint(address to, uint256 amount) external onlyRole(MINTER_ROLE) {
         _mint(to, amount);
-    }
-
-    function _beforeTokenTransfer(address from, address to, uint256 amount)
-        internal
-        override
-    {
-        super._beforeTokenTransfer(from, to, amount);
     }
 
     // The following functions are overrides required by Solidity.
