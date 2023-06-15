@@ -7,28 +7,25 @@ async function main() {
   let ardMoneyAddress = "0x1baD908B21a6198B3CdefCeEdd4B7812DDFD0b2C"
   let treasuryAddress = "0x5214ae4310b4F8059CD801992115283692FBE6eB"
 
-  let penaltyFee = ethers.utils.parseUnits("5",18)
+  let penaltyFee = ethers.parseUnits("5",18)
   let penaltyDeadline = moment().add(1,'h').unix() - moment().unix()
 
-  const XArdmToken = await ethers.getContractFactory("XARDM");
-  const xArdm = await XArdmToken.deploy();
-  await xArdm.deployed();
+  const xArdm = await ethers.deployContract("XARDM")
 
-  const XARDMStaking = await ethers.getContractFactory("XARDMStaking");
-  const staking = await XARDMStaking.deploy(
+
+  const staking = await ethers.deployContract("XARDMStaking",[
     ardMoneyAddress,
-    xArdm.address,
+    await xArdm.getAddress(),
     penaltyFee,
     penaltyDeadline,
     treasuryAddress,
-  );
-  await staking.deployed();
+  ])
 
   let mintRole = await xArdm.MINTER_ROLE();
-  await xArdm.grantRole(mintRole, staking.address);
+  await xArdm.grantRole(mintRole, await staking.getAddress());
 
-  console.log("xARDMStakingContract deployed to:", staking.address);
-  console.log("xARDM deployed to:", xArdm.address);
+  console.log("xARDMStakingContract deployed to:", await staking.getAddress());
+  console.log("xARDM deployed to:", await xArdm.getAddress());
 }
 
 main()
