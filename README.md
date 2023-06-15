@@ -76,6 +76,9 @@ $ npm run test
 # compile contracts & generate ABI and Typescript types
 $ npm run compile
 
+# check test coverage
+$ npm run coverage
+
 # force compile contracts & generate ABI and Typescript types
 $ npm run force-compile
 
@@ -104,6 +107,10 @@ Tests are found in the ./test/ folder.
 ### Contracts
 ---
 Solidity smart contracts are found in ./contracts/
+
+### Coverage
+---
+Coverages are generated after running the "npm run coverage" command
 
 ### ABI
 ---
