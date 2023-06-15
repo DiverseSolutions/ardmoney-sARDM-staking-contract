@@ -129,4 +129,9 @@ describe("Testing Contract Settings", function () {
     await expect(stakingA.setPenaltyPause(false)).to.be.revertedWith(`AccessControl: account ${accountAddressA.toLowerCase()} is missing role ${PauserRole}`);
   })
 
+  it("Version", async function () {
+    const { staking } = await loadFixture(initialize);
+    expect(await staking.version()).to.equal("2");
+  })
+
 })

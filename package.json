@@ -3,6 +3,7 @@
   "scripts": {
     "test": "npx hardhat test --typecheck",
     "compile": "npx hardhat compile",
+    "coverage": "npx hardhat coverage",
     "force-compile": "npx hardhat compile --force",
     "deploy-local": "npx hardhat run scripts/deployment.ts",
     "deploy-ganache": "npx hardhat run scripts/deployment.ts --network ganache",

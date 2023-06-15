@@ -109,6 +109,7 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
         address _treasuryAddress
     ) {
         require(address(_ARDM) != address(0), "ARDM ADDRESS ZERO");
+        require(address(_xARDM) != address(0), "XARDM ADDRESS ZERO");
         require(address(_treasuryAddress) != address(0), "TREASURY ADDRESS ZERO");
         require(_penaltyFee <= FEE_CAP, "PENALTY FEE ABOVE 10% CAP");
 
@@ -204,7 +205,7 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
     function getXARDMRate() external view returns (uint256) {
         uint256 totalxARDM = xARDM.totalSupply();
 
-        if (totalARDM == 0 || totalxARDM == 0) {
+        if (totalARDM == 0) {
             return 0;
         }
 

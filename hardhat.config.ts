@@ -54,7 +54,7 @@ const config : HardhatUserConfig = {
       arbitrumOne: "YOUR_ARBISCAN_API_KEY",
       bsc: process.env.BSC_API_KEY ?? "",
     },
-  }
+  },
 }
 
 export default config;

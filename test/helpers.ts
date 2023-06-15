@@ -17,7 +17,7 @@ export function format(amount: number | BigNumber, decimal: number) {
   return ethers.formatUnits(amount.toString(), decimal);
 }
 
-export function format18(amount: number | BigNumber) {
+export function format18(amount: number | BigNumber | bigint) {
   return ethers.formatUnits(amount.toString(), 18);
 }
 

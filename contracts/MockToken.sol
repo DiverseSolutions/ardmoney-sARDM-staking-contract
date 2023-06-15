@@ -4,6 +4,9 @@ pragma solidity 0.8.19;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+
+/// @notice Used for tests
+/// @dev MockToken should not be considered for test coverage
 contract MockToken is ERC20 , Ownable {
   uint8 private _decimal;
 
