@@ -8,25 +8,15 @@
     "deploy-ganache": "npx hardhat run scripts/deployment.ts --network ganache",
     "deploy-bsc": "npx hardhat run scripts/deployment.ts --network bsc",
     "deploy-test-bsc": "npx hardhat run scripts/deployment.ts --network bscTestnet"
-    
   },
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^1.0.2",
-    "@typechain/ethers-v5": "^10.2.0",
-    "@typechain/hardhat": "^6.1.5",
-    "@types/chai": "^4.3.4",
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^18.16.1",
-    "chai": "^4.3.7",
-    "hardhat": "^2.11.0",
-    "ts-node": "^10.9.1",
-    "typechain": "^8.1.1",
-    "typescript": "^5.0.4"
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "dotenv": "^16.1.4",
+    "hardhat": "^2.15.0",
+    "moment": "^2.29.4"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.7.3",
-    "dotenv": "^16.0.2",
-    "hardhat-abi-exporter": "^2.10.0",
-    "moment": "^2.29.4"
+    "@openzeppelin/contracts": "^4.9.1",
+    "hardhat-abi-exporter": "^2.10.1"
   }
 }

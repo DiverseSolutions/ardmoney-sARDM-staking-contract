@@ -1,5 +1,5 @@
 import { MockToken, XARDM, XARDMStaking } from "typechain-types";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers" 
+import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 
 export interface InitializerType {
     staking : XARDMStaking,
@@ -13,17 +13,17 @@ export interface InitializerType {
     xArdmAddress: string,
     ardmAddress: string,
 
-    accounts : SignerWithAddress[],
-    owner : SignerWithAddress,
-    treasury : SignerWithAddress,
+    accounts : HardhatEthersSigner[],
+    owner : HardhatEthersSigner,
+    treasury : HardhatEthersSigner,
 
     accountAddressA : string,
     accountAddressB : string,
     accountAddressC : string,
 
-    accountA : SignerWithAddress,
-    accountB : SignerWithAddress,
-    accountC : SignerWithAddress,
+    accountA : HardhatEthersSigner,
+    accountB : HardhatEthersSigner,
+    accountC : HardhatEthersSigner,
 
     ardmA : MockToken,
     ardmB : MockToken,

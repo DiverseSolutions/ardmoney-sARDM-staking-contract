@@ -49,7 +49,7 @@ describe("xardmstaking", function () {
     expect(await staking.getXARDMRate()).to.equal(parse18(1));
     expect(await xArdm.balanceOf(attackerAddress)).to.equal(parse18(1));
 
-    await ardmAttacker.transfer(staking.address,parse18(50))
+    await ardmAttacker.transfer(stakingAddress,parse18(50))
 
     expect(await staking.getTotalLockedARDM()).to.equal(parse18(1));
   })

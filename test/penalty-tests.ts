@@ -61,7 +61,7 @@ describe("Testing Penalty", function () {
     await mine(15,{interval:moment().add(1, "d").unix()})
     expect(await staking.hasUserDeadlinePassed(accountA.address)).to.equal(true);
 
-    await stakingWithdraw(base,accountA,50)
+    await stakingWithdraw(base, accountA,50)
 
     expect(await staking.getTotalLockedARDM()).to.equal(parse18(0));
     expect(await staking.getTotalxARDM()).to.equal(parse18(0));

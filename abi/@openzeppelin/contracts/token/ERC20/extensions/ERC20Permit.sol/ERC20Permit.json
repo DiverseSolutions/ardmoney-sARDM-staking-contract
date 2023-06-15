@@ -1,5 +1,8 @@
 [
+  "error InvalidShortString()",
+  "error StringTooLong(string)",
   "event Approval(address indexed,address indexed,uint256)",
+  "event EIP712DomainChanged()",
   "event Transfer(address indexed,address indexed,uint256)",
   "function DOMAIN_SEPARATOR() view returns (bytes32)",
   "function allowance(address,address) view returns (uint256)",
@@ -7,6 +10,7 @@
   "function balanceOf(address) view returns (uint256)",
   "function decimals() view returns (uint8)",
   "function decreaseAllowance(address,uint256) returns (bool)",
+  "function eip712Domain() view returns (bytes1, string, string, uint256, address, bytes32, uint256[])",
   "function increaseAllowance(address,uint256) returns (bool)",
   "function name() view returns (string)",
   "function nonces(address) view returns (uint256)",

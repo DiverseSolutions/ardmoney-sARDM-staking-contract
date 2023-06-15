@@ -11,12 +11,12 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 describe("Testing Rewards", function() {
   async function testScenarioSetup() {
     const base = await initialize();
-    const { ardm,staking, accountA,treasury } = base;
+    const { ardm,staking,stakingAddress, accountA,treasury } = base;
 
     await ardm.mint(accountA.address, parse18(100));
     // Treasury now 500
     await ardm.mint(treasury.address,parse18(450))
-    await ardm.connect(treasury).approve(staking.address,parse18(50))
+    await ardm.connect(treasury).approve(stakingAddress,parse18(50))
     await staking.connect(treasury).deposit(parse18(50))
 
     return base;
@@ -24,13 +24,13 @@ describe("Testing Rewards", function() {
 
   it("Reward", async function() {
     const base = await loadFixture(testScenarioSetup);
-    const { ardm, xArdm, staking, accountA,treasury } = base;
+    const { ardm, xArdm, staking,stakingAddress, accountA,treasury } = base;
 
     expect(await staking.getXARDMRate()).to.equal(parse18(1));
 
     await stakingDeposit(base, accountA, 50);
     // await stakingWithdraw(base, accountA, 50);
-    await ardm.connect(treasury).approve(staking.address,parse18(100))
+    await ardm.connect(treasury).approve(stakingAddress,parse18(100))
     await staking.connect(treasury).reward(parse18(100))
     
     // Rate = (1e18 * totalARDM) / totalxARDM;

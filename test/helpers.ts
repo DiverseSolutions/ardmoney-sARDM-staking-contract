@@ -2,23 +2,23 @@ import { ethers } from "hardhat";
 import moment from "moment";
 import { BigNumber } from "@ethersproject/bignumber" 
 import { InitializerType } from "types/helper";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers" 
+import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 // import helpers from "@nomicfoundation/hardhat-network-helpers";
 
 export function parse(amount: number | BigNumber, decimal: number) {
-  return ethers.utils.parseUnits(amount.toString(), decimal);
+  return ethers.parseUnits(amount.toString(), decimal);
 }
 
 export function parse18(amount: number | BigNumber) {
-  return ethers.utils.parseUnits(amount.toString(), 18);
+  return ethers.parseUnits(amount.toString(), 18);
 }
 
 export function format(amount: number | BigNumber, decimal: number) {
-  return ethers.utils.formatUnits(amount.toString(), decimal);
+  return ethers.formatUnits(amount.toString(), decimal);
 }
 
 export function format18(amount: number | BigNumber) {
-  return ethers.utils.formatUnits(amount.toString(), 18);
+  return ethers.formatUnits(amount.toString(), 18);
 }
 
 export async function initialize() : Promise<InitializerType> {
@@ -40,23 +40,15 @@ export async function initialize() : Promise<InitializerType> {
   const penaltyFee = parse18(0.6);
   const penaltyDeadline = deadline;
 
-  const XArdmToken = await ethers.getContractFactory("XARDM");
-  const xArdm = await XArdmToken.deploy();
-  await xArdm.deployed();
-
-  const MockToken = await ethers.getContractFactory("MockToken");
-  const ardm = await MockToken.deploy("ArdMoney", "ARDM", 18);
-  await ardm.deployed();
-
-  const XARDMStaking = await ethers.getContractFactory("XARDMStaking");
-  const staking = await XARDMStaking.deploy(
-    ardm.address,
-    xArdm.address,
+  const xArdm = await ethers.deployContract("XARDM")
+  const ardm = await ethers.deployContract("MockToken",["ArdMoney","ARDM", 18])
+  const staking = await ethers.deployContract("XARDMStaking",[
+    await ardm.getAddress(),
+    await xArdm.getAddress(),
     penaltyFee,
     penaltyDeadline,
     treasury.address,
-  );
-  await staking.deployed();
+  ])
 
   const ardmA = ardm.connect(accountA);
   const ardmB = ardm.connect(accountB);
@@ -71,7 +63,7 @@ export async function initialize() : Promise<InitializerType> {
   const stakingC = staking.connect(accountC);
 
   let mintRole = await xArdm.MINTER_ROLE();
-  await xArdm.grantRole(mintRole, staking.address);
+  await xArdm.grantRole(mintRole, await staking.getAddress());
 
   await ardm.mint(treasury.address, parse18(50));
 
@@ -88,9 +80,9 @@ export async function initialize() : Promise<InitializerType> {
     AdminRole,
     PauserRole,
 
-    stakingAddress: staking.address,
-    xArdmAddress: xArdm.address,
-    ardmAddress: ardm.address,
+    stakingAddress: await staking.getAddress(),
+    xArdmAddress: await xArdm.getAddress(),
+    ardmAddress: await ardm.getAddress(),
 
     accounts,
     owner,
@@ -118,14 +110,14 @@ export async function initialize() : Promise<InitializerType> {
   };
 }
 
-export async function stakingDeposit(base : InitializerType,account : SignerWithAddress,amount:number){
+export async function stakingDeposit(base : InitializerType,account : HardhatEthersSigner,amount:number){
   const { ardm,staking,stakingAddress } = base;
 
   await ardm.connect(account).approve(stakingAddress, parse18(amount));
   await staking.connect(account).deposit(parse18(amount));
 }
 
-export async function stakingWithdraw(base : InitializerType,account : SignerWithAddress,amount:number){
+export async function stakingWithdraw(base : InitializerType,account : HardhatEthersSigner,amount:number){
   const { xArdm,staking,stakingAddress } = base;
 
   await xArdm.connect(account).approve(stakingAddress, parse18(amount));

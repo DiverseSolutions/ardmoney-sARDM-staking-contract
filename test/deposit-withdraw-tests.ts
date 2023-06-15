@@ -15,9 +15,9 @@ describe("Testing Deposit , Withdraw", function () {
 
   it("Deposit", async function () {
     const base = await loadFixture(testScenarioSetup);
-    const { ardm,ardmA,xArdm,staking,stakingA,accountA } = base;
+    const { ardm,ardmA,xArdm,staking,stakingAddress,stakingA,accountA } = base;
 
-    await ardmA.approve(staking.address, parse18(100));
+    await ardmA.approve(stakingAddress, parse18(100));
 
     await expect(stakingA.deposit(0)).to.be.revertedWith("AMOUNT ZERO");
     await expect(stakingA.deposit(parse18(10)))
@@ -30,12 +30,12 @@ describe("Testing Deposit , Withdraw", function () {
 
   it("Withdraw", async function () {
     const base = await loadFixture(testScenarioSetup);
-    const { ardm,ardmA,xArdmA,xArdm,staking,stakingA,accountA } = base;
+    const { ardm,ardmA,xArdmA,xArdm,staking,stakingAddress,stakingA,accountA } = base;
 
-    await ardmA.approve(staking.address, parse18(100));
+    await ardmA.approve(stakingAddress, parse18(100));
     await stakingA.deposit(parse18(10))
 
-    await xArdmA.approve(staking.address, parse18(100));
+    await xArdmA.approve(stakingAddress, parse18(100));
     await expect(stakingA.withdraw(0)).to.be.revertedWith("AMOUNT ZERO");
 
     await expect(stakingA.withdraw(parse18(10)))

@@ -1,0 +1,4 @@
+[
+  "function CLOCK_MODE() view returns (string)",
+  "function clock() view returns (uint48)"
+]
