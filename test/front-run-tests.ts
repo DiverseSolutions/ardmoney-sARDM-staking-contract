@@ -3,10 +3,10 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 
 
-describe("xardmstaking", function () {
+describe("sArdm Staking Contract Front-Running Test", function () {
 
   async function testScenarioSetup() {
-    const { accounts,ardm,xArdm,staking,stakingAddress } = await initialize()
+    const { accounts,ardm,sArdm,staking,stakingAddress } = await initialize()
 
     let attacker = accounts[5]
     let victim = accounts[6]
@@ -17,8 +17,8 @@ describe("xardmstaking", function () {
     let ardmAttacker = ardm.connect(attacker)
     let ardmVictim = ardm.connect(victim)
 
-    let xArdmAttacker = xArdm.connect(attacker)
-    let xArdmVictim = xArdm.connect(victim)
+    let sArdmAttacker = sArdm.connect(attacker)
+    let sArdmVictim = sArdm.connect(victim)
 
     let stakingAttacker = staking.connect(attacker)
     let stakingVictim = staking.connect(victim)
@@ -27,27 +27,27 @@ describe("xardmstaking", function () {
     await ardm.mint(victimAddress,parse18(100))
 
     return {
-      ardm,xArdm,staking,
+      ardm,sArdm,staking,
       stakingAddress,
 
       attackerAddress,victimAddress,
 
-      ardmAttacker, xArdmAttacker,
-      ardmVictim, xArdmVictim,
+      ardmAttacker, sArdmAttacker,
+      ardmVictim, sArdmVictim,
       stakingAttacker, stakingVictim,
     }
   }
 
 
   it("Front-Run Scenario Check", async function () {
-    const { ardmAttacker,staking,stakingAddress,stakingAttacker,xArdm,attackerAddress } = await loadFixture(testScenarioSetup);
+    const { ardmAttacker,staking,stakingAddress,stakingAttacker,sArdm,attackerAddress } = await loadFixture(testScenarioSetup);
     await ardmAttacker.approve(stakingAddress,parse18(100))
     await stakingAttacker.deposit(parse18(1))
 
     expect(await staking.getTotalLockedARDM()).to.equal(parse18(1));
-    expect(await staking.getTotalxARDM()).to.equal(parse18(1));
-    expect(await staking.getXARDMRate()).to.equal(parse18(1));
-    expect(await xArdm.balanceOf(attackerAddress)).to.equal(parse18(1));
+    expect(await staking.getTotalsARDM()).to.equal(parse18(1));
+    expect(await staking.getSARDMRate()).to.equal(parse18(1));
+    expect(await sArdm.balanceOf(attackerAddress)).to.equal(parse18(1));
 
     await ardmAttacker.transfer(stakingAddress,parse18(50))
 

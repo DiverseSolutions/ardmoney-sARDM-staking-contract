@@ -1,7 +1,7 @@
 import { ethers } from "hardhat"
 import moment from "moment" 
 
-// Mint Role must be given to Staking Contract from xARDM Token
+// Mint Role must be given to Staking Contract from sARDM Token
 // Treasury must be the first to deposit to staking contract to bypass front-running attack
 async function main() {
   let ardMoneyAddress = "0x1baD908B21a6198B3CdefCeEdd4B7812DDFD0b2C"
@@ -10,22 +10,22 @@ async function main() {
   let penaltyFee = ethers.parseUnits("5",18)
   let penaltyDeadline = moment().add(1,'h').unix() - moment().unix()
 
-  const xArdm = await ethers.deployContract("XARDM")
+  const sArdm = await ethers.deployContract("SARDM")
 
 
-  const staking = await ethers.deployContract("XARDMStaking",[
+  const staking = await ethers.deployContract("SARDMStaking",[
     ardMoneyAddress,
-    await xArdm.getAddress(),
+    await sArdm.getAddress(),
     penaltyFee,
     penaltyDeadline,
     treasuryAddress,
   ])
 
-  let mintRole = await xArdm.MINTER_ROLE();
-  await xArdm.grantRole(mintRole, await staking.getAddress());
+  let mintRole = await sArdm.MINTER_ROLE();
+  await sArdm.grantRole(mintRole, await staking.getAddress());
 
-  console.log("xARDMStakingContract deployed to:", await staking.getAddress());
-  console.log("xARDM deployed to:", await xArdm.getAddress());
+  console.log("sARDMStakingContract deployed to:", await staking.getAddress());
+  console.log("sARDM deployed to:", await sArdm.getAddress());
 }
 
 main()

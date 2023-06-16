@@ -2,10 +2,10 @@
 ---
 # Project Overview
 ARDM token staking contract , this contract is a fork of Sushiswap staking contract.
-When users deposit their ARDM token they will reserve xARDM token. xARDM token rate is being defined by the supply of xARDM & ARDM in the contract.
-Weekly ARDM tokens will be added to the contract. Allowing xARDM token holders xARDM rate to increase. Which brings the concept of rewards.
+When users deposit their ARDM token they will reserve sARDM token. sARDM token rate is being defined by the supply of sARDM & ARDM in the contract.
+Weekly ARDM tokens will be added to the contract. Allowing sARDM token holders sARDM rate to increase. Which brings the concept of rewards.
 The staking contract also has penalty features. Which means when the penalty feature is on users will have penalty deadlines. When their penalty deadline has passed
-their withdraw will not have penalty. Vice versa when users withdraw their ARDM tokens by giving xARDM tokens while their penalty deadline hasnt been passed their
+their withdraw will not have penalty. Vice versa when users withdraw their ARDM tokens by giving sARDM tokens while their penalty deadline hasnt been passed their
 withdraw amount will have a penalty fee. The penalty fee will be sent to the treasury address. The contract also has pausibility features allowing for quick withdraw
 and deposit functionality freeze. In case of any error happens.
 
@@ -29,9 +29,9 @@ and deposit functionality freeze. In case of any error happens.
  2. Treasury address must be defined
  3. Penalty fee must be defined
  4. Penalty deadline must be defined
- 5. xARDM token must be deployed
+ 5. sARDM token must be deployed
  6. Staking then must be deployed with all the above parameters
- 7. Mint role must be given from xARDM to Staking Contract
+ 7. Mint role must be given from sARDM to Staking Contract
  8. Staking contract is ready to be used
 
 ---
@@ -42,21 +42,21 @@ and deposit functionality freeze. In case of any error happens.
  - Pauser : Can pause Penalty,Withdraw,Deposit features
  - Admin : Can change penalty fee, penalty deadline, treasury address, revoke roles
  - Treasury : Must add reward ARDM to staking contract & also receives penalty fees
- - User : Can deposit ARDM and receive xARDM also withdraw their ARDM by giving back their xARDM by the current rate
+ - User : Can deposit ARDM and receive sARDM also withdraw their ARDM by giving back their sARDM by the current rate
 
 ### Features
  - Withdraw Pausibility
  - Deposit Pausibility
  - Penalty Pausibility
  - Recieves Reward from 1 address
- - Reward functionality that adds value to xARDM weekly
- - Locks ARDM and gives back xARDM
- - xARDM token must have MINTER ROLE and only should point to 1 Staking Contract. IF in the future staking contract needs to be closed then minter role of that staking contract needs to be revoked and new staking contract needs to have minter role. Giving us full flexibility and migration abilities of xARDM token
+ - Reward functionality that adds value to sARDM weekly
+ - Locks ARDM and gives back sARDM
+ - sARDM token must have MINTER ROLE and only should point to 1 Staking Contract. IF in the future staking contract needs to be closed then minter role of that staking contract needs to be revoked and new staking contract needs to have minter role. Giving us full flexibility and migration abilities of sARDM token
 
 ### Use Case
- 1. User deposits ARDM and recieves xARDM by using the deposit functionality of contract.
- 2. Treasury Address adds ARDM to contract by using the reward functionality of contract. This will increase the xARDM rate
- 3. User withdraws their ARDM + Reward by using the withdraw functionality of contract. xARDM rate is up henceforth user receives more ARDM than initial deposit
+ 1. User deposits ARDM and recieves sARDM by using the deposit functionality of contract.
+ 2. Treasury Address adds ARDM to contract by using the reward functionality of contract. This will increase the sARDM rate
+ 3. User withdraws their ARDM + Reward by using the withdraw functionality of contract. sARDM rate is up henceforth user receives more ARDM than initial deposit
 
 ---
 

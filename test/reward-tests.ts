@@ -24,9 +24,9 @@ describe("Testing Rewards", function() {
 
   it("Reward", async function() {
     const base = await loadFixture(testScenarioSetup);
-    const { ardm, xArdm, staking,stakingAddress, accountA,treasury } = base;
+    const { ardm, sArdm, staking,stakingAddress, accountA,treasury } = base;
 
-    expect(await staking.getXARDMRate()).to.equal(parse18(1));
+    expect(await staking.getSARDMRate()).to.equal(parse18(1));
 
     await stakingDeposit(base, accountA, 50);
     // await stakingWithdraw(base, accountA, 50);
@@ -36,15 +36,15 @@ describe("Testing Rewards", function() {
     
     // Rate = (1e18 * totalARDM) / totalxARDM;
     // xARDM * Rate = ARDM
-    expect(await xArdm.balanceOf(accountA.address)).to.equal(parse18(50));
+    expect(await sArdm.balanceOf(accountA.address)).to.equal(parse18(50));
     expect(await ardm.balanceOf(accountA.address)).to.equal(parse18(50));
-    expect(await staking.getXARDMRate()).to.equal(parse18(2));
+    expect(await staking.getSARDMRate()).to.equal(parse18(2));
 
     await stakingWithdraw(base, accountA, 50);
 
     // 50 xARDM * 2 = 100 ARDM , Initial 50 ARDM + Withdraw 100 ARDM = 150 ARDM
-    expect(await xArdm.balanceOf(accountA.address)).to.equal(parse18(0));
+    expect(await sArdm.balanceOf(accountA.address)).to.equal(parse18(0));
     expect(await ardm.balanceOf(accountA.address)).to.equal(parse18(150));
-    expect(await staking.getXARDMRate()).to.equal(parse18(2));
+    expect(await staking.getSARDMRate()).to.equal(parse18(2));
   });
 });

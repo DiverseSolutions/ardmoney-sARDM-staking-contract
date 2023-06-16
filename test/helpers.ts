@@ -40,11 +40,11 @@ export async function initialize() : Promise<InitializerType> {
   const penaltyFee = parse18(0.6);
   const penaltyDeadline = deadline;
 
-  const xArdm = await ethers.deployContract("XARDM")
+  const sArdm = await ethers.deployContract("SARDM")
   const ardm = await ethers.deployContract("MockToken",["ArdMoney","ARDM", 18])
-  const staking = await ethers.deployContract("XARDMStaking",[
+  const staking = await ethers.deployContract("SARDMStaking",[
     await ardm.getAddress(),
-    await xArdm.getAddress(),
+    await sArdm.getAddress(),
     penaltyFee,
     penaltyDeadline,
     treasury.address,
@@ -54,16 +54,16 @@ export async function initialize() : Promise<InitializerType> {
   const ardmB = ardm.connect(accountB);
   const ardmC = ardm.connect(accountC);
 
-  const xArdmA = xArdm.connect(accountA);
-  const xArdmB = xArdm.connect(accountB);
-  const xArdmC = xArdm.connect(accountC);
+  const sArdmA = sArdm.connect(accountA);
+  const sArdmB = sArdm.connect(accountB);
+  const sArdmC = sArdm.connect(accountC);
 
   const stakingA = staking.connect(accountA);
   const stakingB = staking.connect(accountB);
   const stakingC = staking.connect(accountC);
 
-  let mintRole = await xArdm.MINTER_ROLE();
-  await xArdm.grantRole(mintRole, await staking.getAddress());
+  let mintRole = await sArdm.MINTER_ROLE();
+  await sArdm.grantRole(mintRole, await staking.getAddress());
 
   await ardm.mint(treasury.address, parse18(50));
 
@@ -74,14 +74,14 @@ export async function initialize() : Promise<InitializerType> {
 
   return {
     staking,
-    xArdm,
+    sArdm,
     ardm,
 
     AdminRole,
     PauserRole,
 
     stakingAddress: await staking.getAddress(),
-    xArdmAddress: await xArdm.getAddress(),
+    sArdmAddress: await sArdm.getAddress(),
     ardmAddress: await ardm.getAddress(),
 
     accounts,
@@ -100,9 +100,9 @@ export async function initialize() : Promise<InitializerType> {
     ardmB,
     ardmC,
 
-    xArdmA,
-    xArdmB,
-    xArdmC,
+    sArdmA,
+    sArdmB,
+    sArdmC,
 
     stakingA,
     stakingB,
@@ -118,8 +118,8 @@ export async function stakingDeposit(base : InitializerType,account : HardhatEth
 }
 
 export async function stakingWithdraw(base : InitializerType,account : HardhatEthersSigner,amount:number){
-  const { xArdm,staking,stakingAddress } = base;
+  const { sArdm,staking,stakingAddress } = base;
 
-  await xArdm.connect(account).approve(stakingAddress, parse18(amount));
+  await sArdm.connect(account).approve(stakingAddress, parse18(amount));
   await staking.connect(account).withdraw(parse18(amount));
 }

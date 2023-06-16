@@ -7,19 +7,19 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
-/// @dev xARDM token must have MINTER ROLE and only should point to 1 Staking Contract. 
-contract XARDM is ERC20, ERC20Burnable, AccessControl, ERC20Permit, ERC20Votes {
+/// @dev sARDM token must have MINTER ROLE and only should point to 1 Staking Contract. 
+contract SARDM is ERC20, ERC20Burnable, AccessControl, ERC20Permit, ERC20Votes {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     /// @dev After Token Deployment , Grant Minting Privilege to only Staking Contract
-    /// @dev MINT_ROLE will be used in the future IF staking contract needs to be shutdown and xARDM token needs to be migrated to future Staking Contract
+    /// @dev MINT_ROLE will be used in the future IF staking contract needs to be shutdown and sARDM token needs to be migrated to future Staking Contract
     /// @dev After Granting Staking Contract Minter Role , Owner of the contract should be migrated to an GnosisSafe MultiSignature Wallet with 3 Wallet Consensus Protocol
-    constructor() ERC20("xArdMoney", "xARDM") ERC20Permit("xArdMoney") {
+    constructor() ERC20("xArdMoney", "sARDM") ERC20Permit("xArdMoney") {
         _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
-    /// @dev xARDM token must have MINTER ROLE and only should point to 1 Staking Contract. 
-    /// @dev IF in the future staking contract needs to be closed then minter role of that staking contract needs to be revoked and new staking contract needs to have minter role. Giving us full flexibility and migration abilities of xARDM token.
+    /// @dev sARDM token must have MINTER ROLE and only should point to 1 Staking Contract. 
+    /// @dev IF in the future staking contract needs to be closed then minter role of that staking contract needs to be revoked and new staking contract needs to have minter role. Giving us full flexibility and migration abilities of sARDM token.
     function mint(address to, uint256 amount) external onlyRole(MINTER_ROLE) {
         _mint(to, amount);
     }

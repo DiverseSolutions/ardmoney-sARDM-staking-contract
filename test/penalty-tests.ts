@@ -48,7 +48,7 @@ describe("Testing Penalty", function () {
       false,
     );
     expect(await staking.getTotalLockedARDM()).to.equal(parse18(0));
-    expect(await staking.getTotalxARDM()).to.equal(parse18(0));
+    expect(await staking.getTotalsARDM()).to.equal(parse18(0));
 
     expect(await ardm.balanceOf(treasury.address)).to.equal(parse18(52.5));
     expect(await ardm.balanceOf(accountA.address)).to.equal(parse18(97.5));
@@ -66,7 +66,7 @@ describe("Testing Penalty", function () {
       true,
     );
     expect(await staking.getTotalLockedARDM()).to.equal(parse18(0));
-    expect(await staking.getTotalxARDM()).to.equal(parse18(0));
+    expect(await staking.getTotalsARDM()).to.equal(parse18(0));
 
     expect(await ardm.balanceOf(treasury.address)).to.equal(parse18(50));
     expect(await ardm.balanceOf(accountA.address)).to.equal(parse18(100));
@@ -91,7 +91,7 @@ describe("Testing Penalty", function () {
     await stakingWithdraw(base, accountA, 50);
 
     expect(await staking.getTotalLockedARDM()).to.equal(parse18(0));
-    expect(await staking.getTotalxARDM()).to.equal(parse18(0));
+    expect(await staking.getTotalsARDM()).to.equal(parse18(0));
 
     expect(await ardm.balanceOf(treasury.address)).to.equal(parse18(50));
     expect(await ardm.balanceOf(accountA.address)).to.equal(parse18(100));

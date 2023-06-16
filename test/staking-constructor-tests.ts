@@ -13,7 +13,7 @@ describe("Testing Contract Rate Utilities", function () {
     const penaltyFee = parse18(0.6);
     const penaltyDeadline = deadline;
 
-    const xArdm = await ethers.deployContract("XARDM");
+    const sArdm = await ethers.deployContract("SARDM");
     const ardm = await ethers.deployContract("MockToken", [
       "ArdMoney",
       "ARDM",
@@ -21,9 +21,9 @@ describe("Testing Contract Rate Utilities", function () {
     ]);
     
     await expect(
-      ethers.deployContract("XARDMStaking", [
+      ethers.deployContract("SARDMStaking", [
         ethers.ZeroAddress,
-        await xArdm.getAddress(),
+        await sArdm.getAddress(),
         penaltyFee,
         penaltyDeadline,
         treasury.address,
@@ -33,7 +33,7 @@ describe("Testing Contract Rate Utilities", function () {
     );
 
     await expect(
-      ethers.deployContract("XARDMStaking", [
+      ethers.deployContract("SARDMStaking", [
         await ardm.getAddress(),
         ethers.ZeroAddress,
         penaltyFee,
@@ -41,13 +41,13 @@ describe("Testing Contract Rate Utilities", function () {
         treasury.address,
       ]),
     ).to.be.revertedWith(
-      "XARDM ADDRESS ZERO",
+      "SARDM ADDRESS ZERO",
     );
 
     await expect(
-      ethers.deployContract("XARDMStaking", [
+      ethers.deployContract("SARDMStaking", [
         await ardm.getAddress(),
-        await xArdm.getAddress(),
+        await sArdm.getAddress(),
         penaltyFee,
         penaltyDeadline,
         ethers.ZeroAddress,
@@ -57,9 +57,9 @@ describe("Testing Contract Rate Utilities", function () {
     );
 
     await expect(
-      ethers.deployContract("XARDMStaking", [
+      ethers.deployContract("SARDMStaking", [
         await ardm.getAddress(),
-        await xArdm.getAddress(),
+        await sArdm.getAddress(),
         parse18(11),
         penaltyDeadline,
         treasury.address,

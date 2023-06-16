@@ -17,37 +17,37 @@ describe("Testing Contract Rate Utilities", function () {
     return base;
   }
 
-  it("getXARDMRate() - 0", async function () {
+  it("getSARDMRate() - 0", async function () {
     const { staking } = await loadFixture(initialize);
 
-    expect(await staking.getXARDMRate()).to.equal(parse18(0));
+    expect(await staking.getSARDMRate()).to.equal(parse18(0));
   })
 
-  it("getXARDMAmountRate() - AMOUNT ZERO Revert", async function () {
+  it("getSARDMAmountRate() - AMOUNT ZERO Revert", async function () {
     const { staking } = await loadFixture(initialize);
 
-    await expect(staking.getXARDMAmountRate(0)).to.be.revertedWith("AMOUNT ZERO");
+    await expect(staking.getSARDMAmountRate(0)).to.be.revertedWith("AMOUNT ZERO");
   })
 
-  it("getXARDMAmountRate()", async function () {
+  it("getSARDMAmountRate()", async function () {
     const base = await loadFixture(testScenarioSetup);
-    const { ardm, xArdm, staking,stakingAddress, accountA,treasury } = base;
+    const { ardm, sArdm, staking,stakingAddress, accountA,treasury } = base;
 
-    expect(await staking.getXARDMRate()).to.equal(parse18(1));
+    expect(await staking.getSARDMRate()).to.equal(parse18(1));
 
     await stakingDeposit(base, accountA, 50);
     await ardm.connect(treasury).approve(stakingAddress,parse18(100))
     await staking.connect(treasury).reward(parse18(100))
     
-    // Rate = (1e18 * totalARDM) / totalxARDM;
-    // xARDM * Rate = ARDM
-    // 1 xARDM == 2 ARDM
-    // 2 ARDM == 1 xARDM
-    // 10 ARDM == ? xARDM
-    expect(await xArdm.balanceOf(accountA.address)).to.equal(parse18(50));
+    // Rate = (1e18 * totalARDM) / totalsARDM;
+    // sARDM * Rate = ARDM
+    // 1 sARDM == 2 ARDM
+    // 2 ARDM == 1 sARDM
+    // 10 ARDM == ? sARDM
+    expect(await sArdm.balanceOf(accountA.address)).to.equal(parse18(50));
     expect(await ardm.balanceOf(accountA.address)).to.equal(parse18(50));
-    expect(await staking.getXARDMRate()).to.equal(parse18(2));
-    expect(await staking.getXARDMAmountRate(parse18(10))).to.equal(parse18(5));
+    expect(await staking.getSARDMRate()).to.equal(parse18(2));
+    expect(await staking.getSARDMAmountRate(parse18(10))).to.equal(parse18(5));
   })
 
 })

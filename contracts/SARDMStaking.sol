@@ -5,15 +5,15 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "./interface/IXARDM.sol";
+import "./interface/ISARDM.sol";
 
 /// @notice ARDM Token Staking Contract with withdraw penalty & pausibility & access control feature
 /// @notice Penalty System is added to incentivize stakings to keep their assets longer == less sell pressure
 /// @notice Penalty System adds a new revenue model to protocol
 /// @notice Access Control system adds more clear authorization than Ownership Model
-/// @dev xARDM token must be deployed before staking contract
-/// @dev xARDM token must give minter role after staking contract deployment
-contract XARDMStaking is AccessControl,ReentrancyGuard {
+/// @dev sARDM token must be deployed before staking contract
+/// @dev sARDM token must give minter role after staking contract deployment
+contract SARDMStaking is AccessControl,ReentrancyGuard {
 
     /// @notice Pauser Role used to pause Withdraw/Deposit functionality
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
@@ -46,7 +46,7 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
     /// @dev Initially set in construction
     address public treasuryAddress;
 
-    /// @notice Used to calculate xARDM Rate & view contract total locked ARDM
+    /// @notice Used to calculate sARDM Rate & view contract total locked ARDM
     /// @dev Updated in Deposit,Withdraw Function
     /// @dev this way,front-running attack can be mitigated because only Treasury Address can add rewards to staking contract
     uint256 public totalARDM;
@@ -55,9 +55,9 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
     /// @dev Initially set in construction
     IERC20 immutable ARDM;
 
-    /// @notice Used to mint/burn xARDM Tokens
+    /// @notice Used to mint/burn sARDM Tokens
     /// @dev Initially set in construction
-    IXARDM immutable xARDM;
+    ISARDM immutable sARDM;
 
     /// @notice controls withdraw function
     bool public withdrawPaused;
@@ -103,13 +103,13 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
     /// @dev Contract Deployer will be emergency pauser if anything goes wrong
     constructor(
         IERC20 _ARDM,
-        IXARDM _xARDM,
+        ISARDM _sARDM,
         uint256 _penaltyFee,
         uint256 _penaltyDeadline,
         address _treasuryAddress
     ) {
         require(address(_ARDM) != address(0), "ARDM ADDRESS ZERO");
-        require(address(_xARDM) != address(0), "XARDM ADDRESS ZERO");
+        require(address(_sARDM) != address(0), "SARDM ADDRESS ZERO");
         require(address(_treasuryAddress) != address(0), "TREASURY ADDRESS ZERO");
         require(_penaltyFee <= FEE_CAP, "PENALTY FEE ABOVE 10% CAP");
 
@@ -117,7 +117,7 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
         _grantRole(PAUSER_ROLE, _msgSender());
 
         ARDM = _ARDM;
-        xARDM = _xARDM;
+        sARDM = _sARDM;
 
         penaltyFee = _penaltyFee;
         penaltyDeadline = _penaltyDeadline;
@@ -130,14 +130,14 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
     /// @dev Added settings for withdraw pause , for better security if anything goes wrong with staking contract 
     function deposit(uint256 _amount) external nonReentrant whenDepositNotPaused {
         require(_amount > 0, "AMOUNT ZERO");
-        uint256 totalxARDM = xARDM.totalSupply();
+        uint256 totalsARDM = sARDM.totalSupply();
 
-        if (totalxARDM == 0 || totalARDM == 0) {
-            xARDM.mint(msg.sender, _amount);
+        if (totalsARDM == 0 || totalARDM == 0) {
+            sARDM.mint(msg.sender, _amount);
             emit Deposit(msg.sender, _amount, _amount);
         } else {
-            uint256 mintAmount = (_amount * totalxARDM) / totalARDM;
-            xARDM.mint(msg.sender, mintAmount);
+            uint256 mintAmount = (_amount * totalsARDM) / totalARDM;
+            sARDM.mint(msg.sender, mintAmount);
             emit Deposit(msg.sender, _amount, mintAmount);
         }
 
@@ -162,9 +162,9 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
     /// @dev Added settings for withdraw pause , for better security if anything goes wrong with staking contract 
     function withdraw(uint256 _amount) external nonReentrant whenWithdrawNotPaused {
         require(_amount > 0, "AMOUNT ZERO");
-        uint256 totalxARDM = xARDM.totalSupply();
+        uint256 totalsARDM = sARDM.totalSupply();
 
-        uint256 transferAmount = (_amount * totalARDM) / totalxARDM;
+        uint256 transferAmount = (_amount * totalARDM) / totalsARDM;
 
         if (!penaltyFeePaused && _userDeadline[msg.sender] > block.timestamp) {
             uint256 fee = (transferAmount * penaltyFee) / HUNDRED;
@@ -172,14 +172,14 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
 
             totalARDM -= transferAmount;
 
-            xARDM.burnFrom(msg.sender, _amount);
+            sARDM.burnFrom(msg.sender, _amount);
             ARDM.safeTransfer(msg.sender, transferAmountMinusFee);
             ARDM.safeTransfer(treasuryAddress, fee);
             emit PenaltyFeeSent(treasuryAddress, fee);
         } else {
             totalARDM -= transferAmount;
 
-            xARDM.burnFrom(msg.sender, _amount);
+            sARDM.burnFrom(msg.sender, _amount);
             ARDM.safeTransfer(msg.sender, transferAmount);
         }
 
@@ -201,32 +201,32 @@ contract XARDMStaking is AccessControl,ReentrancyGuard {
         }
     }
 
-    /// @notice Utility Function to get current 1 xARDM rate
-    function getXARDMRate() external view returns (uint256) {
-        uint256 totalxARDM = xARDM.totalSupply();
+    /// @notice Utility Function to get current 1 sARDM rate
+    function getSARDMRate() external view returns (uint256) {
+        uint256 totalsARDM = sARDM.totalSupply();
 
         if (totalARDM == 0) {
             return 0;
         }
 
-        return (ONE * totalARDM) / totalxARDM;
+        return (ONE * totalARDM) / totalsARDM;
     }
 
-    /// @notice Utility Function to get current X amount xARDM rate
-    function getXARDMAmountRate(uint256 _amount)
+    /// @notice Utility Function to get current X amount sARDM rate
+    function getSARDMAmountRate(uint256 _amount)
         external
         view
         returns (uint256)
     {
         require(_amount > 0, "AMOUNT ZERO");
-        uint256 totalxARDM = xARDM.totalSupply();
+        uint256 totalsARDM = sARDM.totalSupply();
 
-        return (_amount * totalxARDM) / totalARDM;
+        return (_amount * totalsARDM) / totalARDM;
     }
 
-    /// @notice Utility Function to get current total staking contract xARDM supply
-    function getTotalxARDM() external view returns (uint256) {
-        return xARDM.totalSupply();
+    /// @notice Utility Function to get current total staking contract sARDM supply
+    function getTotalsARDM() external view returns (uint256) {
+        return sARDM.totalSupply();
     }
 
     /// @notice Utility Function to get current total staking contract ARDM supply

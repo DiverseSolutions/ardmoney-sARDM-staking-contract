@@ -3,14 +3,14 @@ import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 
 export interface InitializerType {
     staking : XARDMStaking,
-    xArdm : XARDM,
+    sArdm : XARDM,
     ardm : MockToken,
 
     AdminRole : string,
     PauserRole : string,
 
     stakingAddress: string,
-    xArdmAddress: string,
+    sArdmAddress: string,
     ardmAddress: string,
 
     accounts : HardhatEthersSigner[],
@@ -29,9 +29,9 @@ export interface InitializerType {
     ardmB : MockToken,
     ardmC : MockToken,
 
-    xArdmA : XARDM,
-    xArdmB : XARDM,
-    xArdmC : XARDM,
+    sArdmA : XARDM,
+    sArdmB : XARDM,
+    sArdmC : XARDM,
 
     stakingA : XARDMStaking,
     stakingB : XARDMStaking,

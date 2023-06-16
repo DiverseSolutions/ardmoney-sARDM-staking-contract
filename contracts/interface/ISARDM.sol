@@ -3,9 +3,9 @@ pragma solidity 0.8.19;
 
 /**
  *
- * xARDM Interface containing all OpenZeppelin Library ERC20, ERC20Burnable, Pausable, AccessControl, ERC20Permit, ERC20Votes Functionalities.
+ * sARDM Interface containing all OpenZeppelin Library ERC20, ERC20Burnable, Pausable, AccessControl, ERC20Permit, ERC20Votes Functionalities.
  */
-interface IXARDM {
+interface ISARDM {
     struct Checkpoint {
       uint32 fromBlock;
       uint224 votes;
