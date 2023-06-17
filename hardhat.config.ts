@@ -35,16 +35,12 @@ const config : HardhatUserConfig = {
     bsc: {
       url: process.env.BSC_URL,
       chainId: 56,
-      accounts: {
-        mnemonic : process.env.MNEMONIC,
-      }
+      accounts: [process.env.PRIVATE_KEY ?? ""]
     },
     bscTestnet: {
       url: process.env.BSC_TESTNET_URL,
       chainId: 97,
-      accounts: {
-        mnemonic : process.env.MNEMONIC,
-      }
+      accounts: [process.env.PRIVATE_KEY ?? ""]
     },
   },
   etherscan: {

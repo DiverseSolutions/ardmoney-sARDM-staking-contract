@@ -138,6 +138,15 @@ $ npm run deploy-test-bsc
 
 ---
 
+#### BSC Deployment
+  - Owner Address : 0x23D4B44F92d416F3FFC75B4651B96De48616Cf20
+  - Treasury Address : 0x23D4B44F92d416F3FFC75B4651B96De48616Cf20
+  - Penalty Fee : 0.6%
+  - Penalty Deadline : 2 weeks - 1209600
+  - Staking Contract : 0x1410dACb719Cbd809f79b10CE82170f2407FdBC3
+  - sARDM : 0x1aae7Fc607092A12812a97DDf51D4f679f951679
+
+
 ## Old Version Deployment History
 
 #### BSC Deployment

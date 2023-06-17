@@ -288,6 +288,6 @@ contract SARDMStaking is AccessControl,ReentrancyGuard {
 
     /// @dev Utility Function to get current staking contract version , assuming future staking contracts will be made
     function version() external pure returns (string memory) {
-        return "2";
+        return "1";
     }
 }

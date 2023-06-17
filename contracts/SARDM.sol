@@ -14,7 +14,7 @@ contract SARDM is ERC20, ERC20Burnable, AccessControl, ERC20Permit, ERC20Votes {
     /// @dev After Token Deployment , Grant Minting Privilege to only Staking Contract
     /// @dev MINT_ROLE will be used in the future IF staking contract needs to be shutdown and sARDM token needs to be migrated to future Staking Contract
     /// @dev After Granting Staking Contract Minter Role , Owner of the contract should be migrated to an GnosisSafe MultiSignature Wallet with 3 Wallet Consensus Protocol
-    constructor() ERC20("xArdMoney", "sARDM") ERC20Permit("xArdMoney") {
+    constructor() ERC20("sArdMoney", "sARDM") ERC20Permit("sArdMoney") {
         _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
